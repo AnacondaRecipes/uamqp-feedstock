@@ -1,0 +1,94 @@
+{% set name = "uamqp" %}
+{% set version = "1.6.11" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/Azure/azure-{{ name }}-python/archive/v{{ version }}.tar.gz
+  sha256: 1f42dc85940d11f3af553551bdd0940a85fff8fa49ceece6e1e969e0279944a1
+
+build:
+  number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  # py<37 - https://github.com/Azure/azure-uamqp-python/blob/main/setup.py#L294
+  skip: True  # [py<37]
+  # cython <0.30 not found
+  skip: True  # [s390x or py>312]
+  # openssl<3.* is not avaliable
+  skip: True  # [linux and py>311]
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    # The CXX compiler identification is unknown
+    - {{ compiler('cxx') }}  # [linux]
+    - cmake
+    # CMake Error: CMake was unable to find a build program corresponding to "Unix Makefiles".  CMAKE_MAKE_PROGRAM is not set.  You probably need to select a different build tool.
+    - make  # [linux]
+    # ERROR (uamqp,lib/python3.12/site-packages/uamqp/c_uamqp.cpython-312-x86_64-linux-gnu.so): Needed DSO lib/libssl.so
+    # ERROR (uamqp,lib/python3.12/site-packages/uamqp/c_uamqp.cpython-312-x86_64-linux-gnu.so): Needed DSO lib/libcrypto.so
+    - openssl <1.2  # [linux]
+  host:
+    - python
+    # https://github.com/Azure/azure-uamqp-python/blob/v1.6.11/build_many_linux.sh#L19
+    - cython <0.30
+    - setuptools >=42
+    - wheel
+    - pip
+    - openssl <1.2  # [linux]
+  run:
+    - python
+    - certifi >=2017.4.17
+    - openssl <1.2  # [linux]
+
+test:
+  source_files:
+    - tests
+    - pytest.ini
+  imports:
+    - uamqp
+  commands:
+    - pip check
+    - pytest
+  requires:
+    - pip
+    - pytest
+
+about:
+  home: https://github.com/Azure/azure-uamqp-python
+  summary: AMQP 1.0 Client Library for Python
+  license: MIT
+  license_file:
+    - LICENSE
+    - src/vendor/azure-uamqp-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/testtools/testrunner/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/testtools/ctest/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/testtools/ctest/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/deps/umock-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/deps/umock-c/deps/testrunner/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/deps/umock-c/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/deps/umock-c/deps/ctest/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/deps/umock-c/deps/ctest/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-shared-utility/build_all/packaging/linux/debian/copyright
+    - src/vendor/azure-uamqp-c/deps/azure-ctest/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-ctest/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/azure-c-testrunnerswitcher/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/umock-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/umock-c/deps/testrunner/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/umock-c/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/deps/umock-c/deps/ctest/LICENSE
+    - src/vendor/azure-uamqp-c/deps/umock-c/deps/ctest/deps/azure-macro-utils-c/LICENSE
+    - src/vendor/azure-uamqp-c/build_all/packaging/linux/debian/copyright
+  license_family: MIT
+  dev_url: https://github.com/Azure/azure-uamqp-python/
+  doc_url: https://learn.microsoft.com/en-gb/python/api/uamqp/uamqp?view=azure-python
+  description: An AMQP 1.0 client library for Python.
+
+extra:
+  recipe-maintainers:
+    - snegireff
