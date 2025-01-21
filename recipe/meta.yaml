@@ -29,7 +29,7 @@ requirements:
     - make  # [linux]
     # ERROR (uamqp,lib/python3.12/site-packages/uamqp/c_uamqp.cpython-312-x86_64-linux-gnu.so): Needed DSO lib/libssl.so
     # ERROR (uamqp,lib/python3.12/site-packages/uamqp/c_uamqp.cpython-312-x86_64-linux-gnu.so): Needed DSO lib/libcrypto.so
-    - openssl <1.2  # [linux]
+    #- openssl <1.2  # [linux]
   host:
     - python
     # https://github.com/Azure/azure-uamqp-python/blob/v1.6.11/build_many_linux.sh#L19
@@ -37,11 +37,11 @@ requirements:
     - setuptools >=42
     - wheel
     - pip
-    - openssl <1.2  # [linux]
+    #- openssl <1.2  # [linux]
   run:
     - python
     - certifi >=2017.4.17
-    - openssl <1.2  # [linux]
+    #- openssl <1.2  # [linux]
 
 test:
   source_files:
