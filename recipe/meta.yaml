@@ -42,6 +42,7 @@ requirements:
     - python
     - certifi >=2017.4.17
     #- openssl <1.2  # [linux]
+    - openssl  # [linux]
 
 test:
   source_files:
