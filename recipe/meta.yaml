@@ -34,7 +34,7 @@ requirements:
     - setuptools >=42
     - wheel
     - pip
-    - openssl 3.0.15  # [linux]
+    - openssl {{ openssl }}  # [linux]
   run:
     - python
     - certifi >=2017.4.17
