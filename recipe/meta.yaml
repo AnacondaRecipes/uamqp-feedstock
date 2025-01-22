@@ -16,8 +16,6 @@ build:
   skip: True  # [py<37]
   # cython <0.30 not found
   skip: True  # [s390x or py>312]
-  # openssl<3.* is not avaliable
-  skip: True  # [linux and py>311]
 
 requirements:
   build:
